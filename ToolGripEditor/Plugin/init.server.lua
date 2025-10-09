@@ -40,7 +40,7 @@ local preview, button do
 	local pluginName = getId(PLUGIN_NAME)
 	local widgetName = getId(script.Name)
 
-	local config = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Left, true, false)
+	local config = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Left, false, false)
 	preview = plugin:CreateDockWidgetPluginGui(widgetName, config)
 	preview.ZIndexBehavior = "Sibling"
 	preview.Title = pluginName
