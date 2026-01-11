@@ -9,11 +9,34 @@ local ToolEditor = {}
 ToolEditor.__index = ToolEditor
 
 function ToolEditor.new()
+    -- Try to get the Studio user's avatar, fallback to gray R15 if it fails
     local hDesc = Instance.new("HumanoidDescription")
-    local gray = BrickColor.new(-1).Color
     
-    for _,limb in pairs(Enum.BodyPart:GetEnumItems()) do
-        hDesc[limb.Name .. "Color"] = gray
+    local success, userId = pcall(function()
+        return game:GetService("StudioService"):GetUserId()
+    end)
+    
+    if success and userId > 0 then
+        -- Try to load the user's appearance
+        local gotDesc, userDesc = pcall(function()
+            return Players:GetHumanoidDescriptionFromUserId(userId)
+        end)
+        
+        if gotDesc and userDesc then
+            hDesc = userDesc
+        else
+            -- Fallback to gray R15
+            local gray = BrickColor.new(-1).Color
+            for _,limb in pairs(Enum.BodyPart:GetEnumItems()) do
+                hDesc[limb.Name .. "Color"] = gray
+            end
+        end
+    else
+        -- Fallback to gray R15 if StudioService is not available
+        local gray = BrickColor.new(-1).Color
+        for _,limb in pairs(Enum.BodyPart:GetEnumItems()) do
+            hDesc[limb.Name .. "Color"] = gray
+        end
     end
     
     local dummy = Players:CreateHumanoidModelFromDescription(hDesc, "R15")

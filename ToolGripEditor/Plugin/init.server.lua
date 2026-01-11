@@ -10,6 +10,7 @@ local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
 local Selection = game:GetService("Selection")
 local Studio = settings():GetService("Studio")
+local StudioService = game:GetService("StudioService")
 local Players = game:GetService("Players")
 
 local modules = script.Modules
@@ -237,13 +238,35 @@ local function onInputBegan(inputObject)
 		local menuId = getId("TGE_Menu")
 		local menu = plugin:CreatePluginMenu(menuId)
 
+		local resetToUser   = menu:AddNewAction(newId(), "Reset to your Studio avatar")
 		local fromSelection = menu:AddNewAction(newId(), "Set appearance from selected HumanoidDescription")
 		local fromUsername  = menu:AddNewAction(newId(), "Set appearance from entered Username")
 		
 		local selected = menu:ShowAsync()
 		menu:Destroy()
 		
-		if selected == fromSelection then
+		if selected == resetToUser then
+			-- Reset to the Studio user's avatar
+			local success, userId = pcall(function()
+				return StudioService:GetUserId()
+			end)
+			
+			if success and userId > 0 then
+				local gotDesc, userDesc = pcall(function()
+					return Players:GetHumanoidDescriptionFromUserId(userId)
+				end)
+				
+				if gotDesc and userDesc then
+					editor:ApplyDescription(userDesc)
+					Selection:Set{}
+					warn("Avatar appearance reset to your Studio account!")
+				else
+					warn("Could not load your avatar appearance at this time!")
+				end
+			else
+				warn("Could not get Studio user ID!")
+			end
+		elseif selected == fromSelection then
 			local set = false
 
 			for _,target in pairs(Selection:Get()) do
