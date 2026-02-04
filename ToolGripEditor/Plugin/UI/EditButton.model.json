@@ -1,6 +1,7 @@
 {
   "ClassName": "TextButton",
   "Properties": {
+    "Name": "EditButton",
     "Text": "Edit Tool Grip",
     "AnchorPoint": [0.5, 1],
     "Position": {
